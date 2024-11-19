@@ -1,6 +1,8 @@
 // importing the express module
 const express = require('express');
+const fileupload = require('express-fileupload');
 const app = express();
+
 
 // importing express-handlebars
 const {engine} = require('express-handlebars');
@@ -17,6 +19,7 @@ app.set('views', 'views');
 //data manipulation
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(fileupload());
 
 //importing the mysql module
 const mysql = require('mysql2');
@@ -25,7 +28,9 @@ const mysql = require('mysql2');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '2525', //password of the database (fictional) 
+    password: '****', //password of the database (fictional) 
+    database: 'project'
+
 });
 
 //connection test
@@ -45,8 +50,26 @@ app.get('/', (req, res) => {
 
 //regitering the product
 app.post('/register', (req, res) => {
-    console.log(req.body);
-    res.end();
+    //getting the data from the form
+    const name = req.body.name;
+    const price = req.body.price;
+    const img = req.files.img.name;
+
+    //SQL query
+    let sql = `INSERT INTO products (name, price, image_url) VALUES ('${name}', ${price}, '${img}')`;
+
+    //executing the query
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.log('Error while registering the product');
+            throw err;
+        }
+        req.files.img.mv(__dirname + '/images/' + req.files.img.name);
+        console.log('Product registered successfully');
+
+    }); 
+
+    res.redirect('/');
 });
 
 // creating a server
