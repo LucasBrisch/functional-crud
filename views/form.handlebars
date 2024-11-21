@@ -15,4 +15,22 @@
 
     </div>
 
+    {{!-- product lists --}}
+    <div class="container">
+        <div class="row">
+            {{#each products}}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card">
+                    <img src="../images/{{image_url}}" alt="not found">
+                    <div class="texts">
+                        <p>{{name}}</p>
+                        <p>R${{price}}</p>
+                    </div>
+                    <a href="#" class="btn btn-warning">edit</a>
+                    <a href="#" class="btn btn-danger">delete</a>
+                </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
 </main>

@@ -10,6 +10,7 @@ const {engine} = require('express-handlebars');
 // adding bootstrap to the project
 app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'));
 app.use('/css', express.static('./css'));
+app.use('/images', express.static('./images'));
 
 // configuring the express to use handlebars
 app.engine('handlebars', engine());
@@ -45,7 +46,17 @@ connection.connect((err) => {
 //creating a route
 // req = request and res = response, those are the parameters of the function
 app.get('/', (req, res) => {
-    res.render('form');
+    //SQL query
+    let sql = 'SELECT * FROM products';
+
+    //executing the query
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.log('Error while fetching the products');
+            throw err;
+        }
+        res.render('form', {products: result});
+    });
 });
 
 //regitering the product
