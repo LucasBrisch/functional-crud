@@ -1,0 +1,25 @@
+<main>
+
+    {{!-- form --}}
+    <div class="container" >
+        <div class="row">
+            <div class="col-6 offset-3 ">
+                <form action="/editform" method="post" enctype="multipart/form-data">
+
+                    <img src="../images/{{product.image_url}}" alt="not found">
+
+                    <input type="hidden" name="image_url" value="{{product.image_url}}">
+                    <input type="number" name="identificator" value="{{product.ID}}">
+                    <input type="text" name="name" value="{{product.name}}" class="form-control" placeholder="product name">
+                    <input type="number" name="price" value="{{product.price}}" class="form-control" placeholder="product price">
+                    <input type="file" name="img" class="form-control">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href='/' class="btn btn-secondary"> cancel</a>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+
+</main>

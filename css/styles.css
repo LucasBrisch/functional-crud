@@ -7,6 +7,16 @@ form input {
     margin-bottom: 10px;
 }
 
+form input [type = "submit"]{
+    margin-top: 10px;
+}
+
+form img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
 .card{
     margin-top: 30px;
     padding: 5px;
