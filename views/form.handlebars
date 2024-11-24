@@ -4,12 +4,13 @@
     <div class="container" >
         <div class="row">
             <div class="col-6 offset-3 ">
-                <form action="/register" method="post" enctype="multipart/form-data">
-                    <input type="text" name="name" class="form-control" placeholder="product name">
-                    <input type="number" name="price" class="form-control" placeholder="product price">
-                    <input type="file" name="img" class="form-control">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                <form action="/register" method="POST" enctype="multipart/form-data">
+                    <input type="text" name="name" placeholder="Product Name" required>
+                    <input type="number" step="0.01" name="price" placeholder="Price" required>
+                    <input type="file" name="img" required> <!-- Certifique-se que o nome aqui seja 'img' -->
+                    <button type="submit">Register</button>
+                 </form>
+
             </div>
         </div>
 
@@ -21,7 +22,7 @@
             {{#each products}}
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card">
-                    <img src="../images/{{image_url}}" alt="not found">
+                    <img src={{product_image}} alt="not found">
                     <div class="texts">
                         <p>{{name}}</p>
                         <p>R${{price}}</p>

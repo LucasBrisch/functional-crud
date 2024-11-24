@@ -2,10 +2,12 @@
 const express = require('express');
 const fileupload = require('express-fileupload');
 const app = express();
+const multer = require('multer');
 
 
 // importing express-handlebars
 const {engine} = require('express-handlebars');
+const upload = multer({ dest: 'uploads/' });
 
 // adding bootstrap to the project
 app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'));
@@ -30,7 +32,7 @@ const fs = require('fs');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '****', //password of the database (fictional) 
+    password: '2525', //password of the database (fictional) 
     database: 'project'
 
 });
@@ -61,31 +63,38 @@ app.get('/', (req, res) => {
 });
 
 //regitering the product
-app.post('/register', (req, res) => {
-    //getting the data from the form
-    const name = req.body.name;
-    const price = req.body.price;
-    const img = req.files.img.name;
+app.post('/register', upload.single('img'), (req, res) => {
+    // Obtendo os dados do formulário
+    const { name, price } = req.body;
+    const img = req.file;
 
-    //SQL query
-    let sql = `INSERT INTO products (name, price, image_url) VALUES ('${name}', ${price}, '${img}')`;
+    if (!req.file) {
+        return res.status(400).send('Image upload failed');
+    }
 
-    //executing the query
-    connection.query(sql, (err, result) => {
+    // Lendo o arquivo da imagem como binário
+    const imgData = fs.readFileSync(img.path);
+
+    // Query SQL usando placeholders para segurança
+    const sql = `INSERT INTO products (name, price, product_image) VALUES (?, ?, ?)`;
+
+    // Executando a query
+    connection.query(sql, [name, price, imgData], (err, result) => {
         if (err) {
-            console.log('Error while registering the product');
-            throw err;
+            console.error('Error while registering the product:', err);
+            return res.status(500).send('Database error');
         }
-        req.files.img.mv(__dirname + '/images/' + req.files.img.name);
         console.log('Product registered successfully');
+        
+        // Excluindo o arquivo local (opcional)
+        fs.unlinkSync(img.path);
 
-    }); 
-
-    res.redirect('/');
+        res.redirect('/');
+    });
 });
 
 //remove route
-app.get('/remove/:ID&:image_url', (req, res) => {
+app.get('/remove/:ID&:product_image', (req, res) => {
     let sql = `DELETE FROM products WHERE id = ${req.params.ID}`;
 
     connection.query(sql, (err, result) => {
@@ -93,7 +102,7 @@ app.get('/remove/:ID&:image_url', (req, res) => {
             console.log('Error while deleting the product');
             throw err;
         }
-        fs.unlink(__dirname + '/images/' + req.params.image_url, (err) => {
+        fs.unlink(__dirname + '/images/' + req.params.product_image, (err) => {
             if (err) {
                 console.log('Error while deleting the image');
                 throw err;
@@ -123,12 +132,12 @@ app.post('/editform', (req, res) => {
     const name = req.body.name;
     const price = req.body.price;
     let id = req.body.identificator;
-    let img_name = req.body.image_url;  //old image name
+    let img_name = req.body.product_image;  //old image name
     
 
     try{
         let NewImg = req.files.img.name;
-        let sql = `UPDATE products SET name = '${name}', price = ${price}, image_url = '${NewImg}' WHERE ID = ${id}`;
+        let sql = `UPDATE products SET name = '${name}', price = ${price}, product_image = '${NewImg}' WHERE ID = ${id}`;
         
         connection.query(sql, (err, result) => {
             if (err) {

@@ -6,7 +6,7 @@
             <div class="col-6 offset-3 ">
                 <form action="/editform" method="post" enctype="multipart/form-data">
 
-                    <img src="../images/{{product.image_url}}" alt="not found">
+                    <img src={{product_image}} alt="not found">
 
                     <input type="hidden" name="image_url" value="{{product.image_url}}">
                     <input type="number" name="identificator" value="{{product.ID}}">
